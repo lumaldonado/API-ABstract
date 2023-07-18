@@ -7,15 +7,17 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @Entity
-public class Climate {
+public class Weather {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private LocalDate date;
-    private String climateCondition;
+    private String weatherCondition;
 
-    public Climate(String climateCondition){
-        this.climateCondition = climateCondition;
+
+    public Weather(LocalDate date, String weatherCondition){
+        this.date = date;
+        this.weatherCondition = weatherCondition;
     }
 
     

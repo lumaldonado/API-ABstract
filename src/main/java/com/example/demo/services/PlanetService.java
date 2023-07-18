@@ -1,62 +1,53 @@
 package com.example.demo.services;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.stereotype.Service;
 
-import static java.time.temporal.ChronoUnit.DAYS;
-
+import com.example.demo.entities.Weather;
 import com.example.demo.entities.Planet;
 
+@Service
 public class PlanetService {
 
     Planet ferengi = new Planet("Farengi", 1, 500);
     Planet betasoide = new Planet("Betasoide", 3, 2000);
-    Planet vulcano = new Planet("Vulcano", 1, 1000);
+    Planet vulcano = new Planet("Vulcano", 5, 1000);
 
-    public boolean areAlined(LocalDate date) {
-        List<Long> angleList = this.getAngles(date);
-
-        if (angleList.get(0).equals(angleList.get(1)) && angleList.get(0).equals(angleList.get(2))) {
-            return true;
-        } else {
-            return false;
-        }
-
-    }
-
-    public boolean sunIsInTriangle(LocalDate date) {
-        List<Long> angleList = this.getAngles(date);
-        long X = 0;
-        long Y = 0;
-        long p1x = angleList.get(0);
-        long p2x = angleList.get(1);
-        long p3x = angleList.get(2);
-
-        double totalArea = Math.abs((p2x - p3x) * (0 - p3x) + (p3x - p2x) * (Y - p3x));
-        double area1 = Math.abs((p2x - p3x) * (X - p3x) + (p3x - p2x) * (Y - p3x));
-        double area2 = Math.abs((p3x - 0) * (X - p3x) + (0 - p3x) * (Y - p3x));
-        double area3 = Math.abs((0 - p2x) * (X - 0) + (p2x - 0) * (Y - 0));
+    public Weather calculateWeatherCondition(LocalDate date) {
+        double ferengiPosition = calculatePlanetPosition(ferengi.getAngularSpeed(), ferengi.getToSunDistance(), date);
+        double betasoidePosition = calculatePlanetPosition(betasoide.getAngularSpeed(), betasoide.getToSunDistance(), date);
+        double vulcanoPosition = calculatePlanetPosition(vulcano.getAngularSpeed(), vulcano.getToSunDistance(), date);
         
-        return area1 + area2 + area3 == totalArea;
+        if (arePlanetsAligned(ferengiPosition, betasoidePosition, vulcanoPosition)) {
+            return new Weather(date, "sequía");
+        } else if (isSunInsideTriangle(ferengiPosition, betasoidePosition, vulcanoPosition)) {
+            return new Weather(date, "clima optimo");
+        } else {
+            return new Weather(date, "lluvia");
+        }
     }
 
-    public List<Long> getAngles(LocalDate date) {
-
-        LocalDate initialDate = LocalDate.of(2023, 1, 1);
-        long days = DAYS.between(initialDate, date);
-        List<Long> angleList = new ArrayList<>();
-
-        long ferengiAngle = ferengi.getAngularSpeed() * days;
-        long betasoideAngle = betasoide.getAngularSpeed() * days;
-        long vulcanoAngle = vulcano.getAngularSpeed() * days;
-
-        angleList.add(ferengiAngle);
-        angleList.add(betasoideAngle);
-        angleList.add(vulcanoAngle);
-
-        return angleList;
-
+    private double calculatePlanetPosition(double angularSpeed, double distance, LocalDate date) {
+        double degrees = (angularSpeed * date.getDayOfYear()) % 360; 
+        return Math.toRadians(degrees);
     }
 
+    private boolean arePlanetsAligned(double ferengiPosition, double betasoidePosition, double vulcanoPosition) {
+        double diff1 = Math.abs(ferengiPosition - betasoidePosition);
+        double diff2 = Math.abs(betasoidePosition - vulcanoPosition);
+        double diff3 = Math.abs(vulcanoPosition - ferengiPosition);
+        return (diff1 <= 0.001 && diff2 <= 0.001 && diff3 <= 0.001);
+    }
+
+    private boolean isSunInsideTriangle(double ferengiPosition, double betasoidePosition, double vulcanoPosition) {
+        double sunPosition = 0.0; 
+        double deltaAngle1 = Math.abs(sunPosition - ferengiPosition);
+        double deltaAngle2 = Math.abs(sunPosition - betasoidePosition);
+        double deltaAngle3 = Math.abs(sunPosition - vulcanoPosition);
+        double totalAngle = Math.abs(deltaAngle1 + deltaAngle2 + deltaAngle3);
+        return (totalAngle >= 0.001 && totalAngle <= (2 * Math.PI - 0.001));
+    }
+
+   
+    
 }
