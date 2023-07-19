@@ -40,17 +40,17 @@ public class WeatherController {
         return ResponseEntity.ok(weather);
     }
 
-    @GetMapping("/wetherCondition")
+    @GetMapping("/weatherCondition")
     public ResponseEntity<?> obtenerClimaPorClima(@RequestParam("weather") String weather) {
         List<Weather> weatherList = repository.findByWeatherCondition(weather);
         if (weatherList.size() == 0) {
 
             return ResponseEntity.badRequest().body("There are no records for that weather condition");
         }
-        return ResponseEntity.ok(weather);
+        return ResponseEntity.ok(weatherList);
     }
 
-    @GetMapping("/wetherCondition/numberOfDays")
+    @GetMapping("/weatherCondition/numberOfDays")
     public ResponseEntity<?> getHowManyDaysPerWeatherCondition(@RequestParam("weather") String weather) {
         Integer daysPerWeatherCondition = service.howManyDaysPerWeatherCondition(weather);
         if(daysPerWeatherCondition == null){
