@@ -1,6 +1,5 @@
 package com.example.demo.services;
 
-
 import java.time.LocalDate;
 import java.util.*;
 
@@ -19,14 +18,14 @@ public class WeatherService {
     @Autowired
     private PlanetService planetService;
 
-    public List<Weather> generateAllClimateData(){
-        
-        List<Weather> listClimate =  new ArrayList<>();
+    public List<Weather> generateAllClimateData() {
+
+        List<Weather> listClimate = new ArrayList<>();
 
         LocalDate date = LocalDate.of(2023, 1, 1);
-        for (int i = 0; i < 3650; i++) { 
+        for (int i = 0; i < 3650; i++) {
             Weather climate = planetService.calculateWeatherCondition(date);
-            listClimate .add(climate);
+            listClimate.add(climate);
             date = date.plusDays(1);
         }
 
@@ -35,13 +34,24 @@ public class WeatherService {
 
     }
 
-    public Weather findByDate(LocalDate date){
-        return climateRepository.findByDate(date);
+    public Weather findByDate(LocalDate date) {
+
+        Weather weather = climateRepository.findByDate(date);
+        if (weather == null) {
+            return null;
+        }
+        return weather;
+
     }
 
-    public Integer howManyDaysPerWeatherCondition(String weatherCondition){
-        return climateRepository.findByWeatherCondition(weatherCondition).size();
+    public Integer howManyDaysPerWeatherCondition(String weatherCondition) {
+
+        Integer weatherConditionDays = climateRepository.findByWeatherCondition(weatherCondition).size();
+        if (weatherConditionDays.equals(0)) {
+            return null;
+        }
+        return weatherConditionDays;
+
     }
 
-    
 }

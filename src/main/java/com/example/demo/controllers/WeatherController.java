@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.entities.Weather;
@@ -24,26 +25,38 @@ public class WeatherController {
     @Autowired
     WeatherRepository repository;
 
-
     @GetMapping("/all")
     public List<Weather> obtenerCondicionesClimaticas() {
         return service.generateAllClimateData();
+
     }
 
     @GetMapping("/{fecha}")
-    public Weather obtenerClimaPorFecha(@PathVariable LocalDate fecha) {
-        return service.findByDate(fecha);
+    public ResponseEntity<?> obtenerClimaPorFecha(@PathVariable LocalDate fecha) {
+        Weather weather = service.findByDate(fecha);
+        if (weather == null) {
+            return ResponseEntity.badRequest().body("There are no weather records for that specific date");
+        }
+        return ResponseEntity.ok(weather);
     }
 
     @GetMapping("/wetherCondition")
-    public List<Weather> obtenerClimaPorClima(@RequestParam String climate) {
-        return repository.findByWeatherCondition(climate);
+    public ResponseEntity<?> obtenerClimaPorClima(@RequestParam("weather") String weather) {
+        List<Weather> weatherList = repository.findByWeatherCondition(weather);
+        if (weatherList.size() == 0) {
+
+            return ResponseEntity.badRequest().body("There are no records for that weather condition");
+        }
+        return ResponseEntity.ok(weather);
     }
 
     @GetMapping("/wetherCondition/numberOfDays")
-    public Integer getHowManyDaysPerWeatherCondition(@RequestParam String climate) {
-        return service.howManyDaysPerWeatherCondition(climate);
+    public ResponseEntity<?> getHowManyDaysPerWeatherCondition(@RequestParam("weather") String weather) {
+        Integer daysPerWeatherCondition = service.howManyDaysPerWeatherCondition(weather);
+        if(daysPerWeatherCondition == null){
+             return ResponseEntity.badRequest().body("There are no records for that weather condition");
+        }
+        return ResponseEntity.ok(daysPerWeatherCondition);
     }
 
-    
 }

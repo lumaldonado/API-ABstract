@@ -19,9 +19,9 @@ public class PlanetService {
         double vulcanoPosition = calculatePlanetPosition(vulcano.getAngularSpeed(), vulcano.getToSunDistance(), date);
         
         if (arePlanetsAligned(ferengiPosition, betasoidePosition, vulcanoPosition)) {
-            return new Weather(date, "sequía");
+            return new Weather(date, "sequia");
         } else if (isSunInsideTriangle(ferengiPosition, betasoidePosition, vulcanoPosition)) {
-            return new Weather(date, "clima optimo");
+            return new Weather(date, "condiciones optimas");
         } else {
             return new Weather(date, "lluvia");
         }
