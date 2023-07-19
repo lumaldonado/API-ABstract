@@ -13,7 +13,7 @@ import com.example.demo.services.WeatherService;
 import com.example.demo.services.PlanetService;
 
 @RestController
-@RequestMapping("/climate")
+@RequestMapping("/weather")
 public class WeatherController {
 
     @Autowired
