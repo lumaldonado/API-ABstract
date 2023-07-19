@@ -1,7 +1,5 @@
 # # API-ABstract
 
-API REST creada con el objetivo de obtener la ubicacion y poder decodificar el mensaje de auxilio de un nave imperial a la deriva, utilizando 3 satelites a distintas distancias.
-
 Tecnología utilizada: Springboot
 
 Lenguaje: Java 11
